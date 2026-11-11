@@ -20,7 +20,7 @@ Signal chain (mono in from the left input, stereo out):
 
 | Control | Function |
 |---|---|
-| Left knob | **Fuzz**: fuzz gain and Depth together |
+| Left knob | **Fuzz**: fuzz gain and Depth together. Back it off to clean up chords and ringing notes |
 | Mid knob | **Reverb**: dry to drenched |
 | Right knob | **Level**: output, unity at 3 o'clock |
 | Footswitch press | **Fuzz** on/off (off = chimey clean) |

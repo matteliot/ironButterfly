@@ -39,13 +39,20 @@ use dsp::*;
 // ---------------------------------------------------------------- voicing
 
 /// Fuzz gain (dB) at knob 0 and the extra at knob 1; Depth (blend towards
-/// the second transistor) follows the same knob.
-const FUZZ_MIN_DB: f32 = 18.0;
-const FUZZ_RANGE_DB: f32 = 22.0;
+/// the second transistor) follows the same knob. The range starts low enough
+/// that backing the knob off cleans up chords and ringing notes (less
+/// intermodulation hash), like rolling back a real fuzz.
+const FUZZ_MIN_DB: f32 = 6.0;
+const FUZZ_RANGE_DB: f32 = 34.0;
 const DEPTH_MIN: f32 = 0.45;
 const DEPTH_RANGE: f32 = 0.5;
-/// Second transistor stage gain.
-const STAGE2_GAIN: f32 = 6.0;
+/// Second transistor stage gain, which follows Depth: MIN + RANGE * depth.
+const STAGE2_MIN: f32 = 1.5;
+const STAGE2_RANGE: f32 = 4.5;
+/// Below the default Fuzz setting, this much makeup (dB per unit of knob
+/// below it) keeps the volume curve where it was before the wider range.
+const FUZZ_DEFAULT: f32 = 0.7;
+const FUZZ_MAKEUP_DB: f32 = 7.0;
 
 /// Clean: drive into the amp's chimey breakup, and makeup gain (dB) so it
 /// sits a little under the fuzz.
@@ -153,6 +160,8 @@ struct Ib {
     // smoothed values and targets
     g_fuzz: f32,
     g_fuzz_t: f32,
+    fuzz_mk: f32,
+    fuzz_mk_t: f32,
     depth: f32,
     depth_t: f32,
     out_g: f32,
@@ -204,6 +213,8 @@ impl Ib {
         organ_on: true,
         g_fuzz: 1.0,
         g_fuzz_t: 1.0,
+        fuzz_mk: 1.0,
+        fuzz_mk_t: 1.0,
         depth: 0.5,
         depth_t: 0.5,
         out_g: 0.0,
@@ -269,6 +280,7 @@ impl Ib {
         self.c_org_rel = coef(0.12);
         self.retarget();
         self.g_fuzz = self.g_fuzz_t;
+        self.fuzz_mk = self.fuzz_mk_t;
         self.depth = self.depth_t;
         self.out_g = self.out_t;
         self.wet = self.wet_t;
@@ -279,6 +291,7 @@ impl Ib {
 
     fn retarget(&mut self) {
         self.g_fuzz_t = db(FUZZ_MIN_DB + FUZZ_RANGE_DB * self.fuzz);
+        self.fuzz_mk_t = db(FUZZ_MAKEUP_DB * (FUZZ_DEFAULT - self.fuzz).max(0.0));
         self.depth_t = DEPTH_MIN + DEPTH_RANGE * self.fuzz;
         self.wet_t = REV_MAX_WET * self.reverb;
         // Square law: 0 at minimum, unity at 3 o'clock, +5 dB at maximum.
@@ -292,9 +305,9 @@ impl Ib {
         let u = self.fuzz_hp.process(x) * self.g_fuzz;
         let a = 0.5 * (stage1(0.5 * (u + self.u1)) + stage1(u));
         self.u1 = u;
-        let b = (a * STAGE2_GAIN).clamp(-1.0, 1.0);
+        let b = (a * (STAGE2_MIN + STAGE2_RANGE * self.depth)).clamp(-1.0, 1.0);
         let y = b * self.depth - 0.5 * a * (1.0 - self.depth);
-        self.fuzz_nasal.process(self.fuzz_lp.process(y))
+        self.fuzz_nasal.process(self.fuzz_lp.process(y)) * self.fuzz_mk
     }
 
     /// Organ double: squares at the tracked pitch and an octave below.
@@ -327,6 +340,7 @@ impl Ib {
     #[inline]
     fn tick(&mut self, rev: &mut Reverb, x: f32) -> (f32, f32) {
         self.g_fuzz += (self.g_fuzz_t - self.g_fuzz) * self.c_param;
+        self.fuzz_mk += (self.fuzz_mk_t - self.fuzz_mk) * self.c_param;
         self.depth += (self.depth_t - self.depth) * self.c_param;
         self.out_g += (self.out_t - self.out_g) * self.c_param;
         self.wet += (self.wet_t - self.wet) * self.c_param;
