@@ -25,6 +25,8 @@ entry is marked as superseded).
    - The riff is doubled by a combo organ, and the whole thing sits in period reverb.
 3. Push the project to its GitHub remote (`origin`).
 
+4. On `master`, add the demo render (`cargo sim` output) as `samples/iron_butterfly_demo.wav`. Commit with the message "ai" and push.
+
 ### Implementation decisions (needed to recreate requirement 2)
 
 - **Toolchain and packaging (copied from `../soundGarden`).**
