@@ -1,0 +1,13 @@
+# `cargo build --release` builds the pedal patch by default.
+[build]
+target = "thumbv7em-none-eabihf"
+
+# Endless = Cortex-M7 with a single-precision FPU (FPv5-SP-D16): schedule for
+# the M7 and keep LLVM from emitting double-precision instructions (rustc warns
+# that `fp64` is unknown to it but passes it on to LLVM).
+[target.thumbv7em-none-eabihf]
+rustflags = ["-C", "target-cpu=cortex-m7", "-C", "target-feature=-fp64"]
+
+[alias]
+# Render the demo riff through the patch on this Mac: `cargo sim [OUT.wav]`.
+sim = "run --release --target aarch64-apple-darwin --"

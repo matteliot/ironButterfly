@@ -1,0 +1,22 @@
+[package]
+name = "iron_butterfly"
+description = 'Polyend Endless patch: the most "In-A-Gadda-Da-Vida" guitar sound ever'
+edition = "2024"
+version = "0.1.0"
+license = "MIT"
+
+[[bin]]
+name = "iron_butterfly"
+test = false
+bench = false
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+debug = true # symbols stay in the ELF only; the .endl is a raw image
+
+[profile.dev]
+panic = "abort"
+opt-level = 1
