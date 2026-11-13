@@ -31,6 +31,11 @@ Signal chain (mono in from the left input, stereo out):
 | Fuzz | magenta | red |
 | Clean | light blue | light green |
 
+## Install
+
+Download [`release/iron_butterfly.endl`](release/iron_butterfly.endl) (on GitHub: open it and click the download button), connect the Endless
+to your computer over USB and copy the file onto the pedal. Nothing needs to be built. To rebuild it from source, see below.
+
 ## Build
 
 ```sh
