@@ -47,6 +47,6 @@ cargo build --release        # ELF for the pedal (default target is thumbv7em-no
 cargo sim                    # -> target/render/iron_butterfly_demo.wav
 ```
 
-This renders an original D-minor single-note riff at 112 bpm through the same
+This renders an original D-minor single-note riff at 112 bpm on a modelled electric guitar (`src/guitar.rs`: exact tuning, pick and humbucker, palm mutes, strums, vibrato and human timing) through the same
 patch code. It goes fuzz + organ → fuzz only → clean + reverb → fuzz + organ,
 then prints the level of each section.
