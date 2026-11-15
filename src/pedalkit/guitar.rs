@@ -10,7 +10,7 @@
 //! - Decay: low strings ring longer than high ones; palm mutes are short and dark; releasing a note damps it in ~50 ms instead of cutting it.
 //! - Playing: vibrato that fades in on held notes, bends and slides, strummed chords, and small random timing and velocity differences (see `Player`).
 
-use crate::dsp::Biquad;
+use super::dsp::Biquad;
 
 pub const SR: f32 = 48_000.0;
 const RING: usize = 4096; // power of two, longer than the lowest note's period (E2 = 582 samples)

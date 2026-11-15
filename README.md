@@ -52,6 +52,12 @@ cargo build --release        # ELF for the pedal (default target is thumbv7em-no
 cargo sim                    # -> target/render/iron_butterfly_demo.wav
 ```
 
-This renders an original D-minor single-note riff at 112 bpm on a modelled electric guitar (`src/guitar.rs`: exact tuning, pick and humbucker, palm mutes, strums, vibrato and human timing) through the same
+This renders an original D-minor single-note riff at 112 bpm on a modelled electric guitar (`src/pedalkit/guitar.rs`: exact tuning, pick and humbucker, palm mutes, strums, vibrato and human timing) through the same
 patch code. It goes fuzz + organ → fuzz only → clean + reverb → fuzz + organ,
 then prints the level of each section.
+
+## Code layout
+
+- `src/iron_butterfly/`: the pedal. `patch.rs` wires it up, `presets.rs` holds every number, and the other files are its blocks.
+- `src/pedalkit/`: shared building blocks (effects, DSP, the Endless ABI, the entry points, the demo renderer). It's a copy of the master in [superPedal](https://github.com/matteliot/superPedal), which also carries this pedal, so don't edit it here.
+- `src/host/`: the `cargo sim` demo (`score.rs` is what it plays).
