@@ -4,7 +4,7 @@
 use super::abi::Color;
 use super::pool::Pool;
 
-/// One knob: its name on the pedal's screen and its default (0..1).
+/// One knob: the name the patch reports to the firmware, and its default (0..1).
 pub struct Param {
     pub name: &'static str,
     pub default: f32,
